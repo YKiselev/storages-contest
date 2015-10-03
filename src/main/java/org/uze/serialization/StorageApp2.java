@@ -8,6 +8,7 @@ import net.openhft.chronicle.map.ReadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.serialization.org.uze.serialization.model.Item;
+import org.uze.serialization.storage.HybridStringStorage;
 import org.uze.serialization.storage.ItemView;
 import org.uze.serialization.storage.StringStorage;
 import org.uze.serialization.storage.UnsafeStringStorage;
@@ -34,6 +35,8 @@ public class StorageApp2 implements Closeable {
     //private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
 
     private StringStorage stringStorage = new UnsafeStringStorage(2_000_000, 160);
+
+    //private StringStorage stringStorage = new HybridStringStorage(5_000_000, 40);
 
     public static void main(String[] args) throws Exception {
         try (StorageApp2 app = new StorageApp2()) {

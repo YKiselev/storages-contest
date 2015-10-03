@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,7 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
     private int byteArrayBaseOffset = unsafe.arrayBaseOffset(byte[].class);
 
     private int charArrayBaseOffset = unsafe.arrayBaseOffset(char[].class);
+    private final Field stringValueField;
 
     public UnsafeStringStorage(int size, int averageStringSizeInBytes) {
         stringToIds = ChronicleMapBuilder.of(String.class, Long.class)
@@ -60,6 +62,13 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
             }
         } finally {
             unlock();
+        }
+
+        try {
+            stringValueField = String.class.getDeclaredField("value");
+            stringValueField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -164,6 +173,15 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
         final int len = unsafe.getInt(pos);
         Preconditions.checkArgument(isInRange(id) && len >= 0 && isInRange(id + len * CHAR_BYTES), "Invalid string id: " + id);
         pos += INTEGER_BYTES;
+//        try {
+//            final char[] buff = new char[len];
+//            unsafe.copyMemory(null, pos, buff, charArrayBaseOffset, len * CHAR_BYTES);
+//            final String result = (String)unsafe.allocateInstance(String.class);
+//            stringValueField.set(result, buff);
+//            return result;
+//        } catch (InstantiationException|IllegalAccessException e) {
+//            throw new RuntimeException(e);
+//        }
         final char[] buff = new char[len];
         unsafe.copyMemory(null, pos, buff, charArrayBaseOffset, len * CHAR_BYTES);
         return new String(buff);
