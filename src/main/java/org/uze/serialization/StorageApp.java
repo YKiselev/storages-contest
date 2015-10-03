@@ -1,26 +1,23 @@
 package org.uze.serialization;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 import net.openhft.chronicle.map.ReadContext;
-import net.openhft.lang.values.LongValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.serialization.org.uze.serialization.model.Item;
 import org.uze.serialization.storage.ItemView;
+import org.uze.serialization.storage.SimpleStringStorage;
 import org.uze.serialization.storage.StringStorage;
 import org.uze.serialization.storage.model.ItemViewImpl;
 import org.uze.serialization.utils.ItemFactory;
+import org.uze.serialization.utils.ItemViewConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by Y.Kiselev on 01.10.2015.
@@ -29,9 +26,7 @@ public class StorageApp {
 
     private final Logger logger = LogManager.getLogger(getClass());
 
-    private StringStorage stringStorage = new StringStorage(2_000_000, 80);
-
-    private final AtomicLong dump = new AtomicLong();
+    private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
 
     public static void main(String[] args) throws Exception {
         new StorageApp().run();
@@ -95,6 +90,7 @@ public class StorageApp {
         final int[] sizes = new int[]{10, 5_000, 10_000, 50_000, 100_000};
         long totalElapsed = 0;
         long totalItems = 0;
+        final ItemViewConsumer consumer = new ItemViewConsumer(stringStorage);
         final Stopwatch timer = Stopwatch.createStarted();
         final ItemView valueInstance = keyToItems.newValueInstance();
         while (!Thread.currentThread().isInterrupted()) {
@@ -107,7 +103,7 @@ public class StorageApp {
                 final int keyIndex = rnd.nextInt(0, keyList.size());
                 final Long key = keyList.get(keyIndex);
                 try (ReadContext<Long, ItemView> context = keyToItems.getUsingLocked(key, valueInstance)) {
-                    consume(valueInstance);
+                    consumer.consume(valueInstance);
                 }
             }
             final long elapsed = sw.elapsed(TimeUnit.MICROSECONDS);
@@ -121,12 +117,6 @@ public class StorageApp {
             }
         }
 
-        logger.debug("dump is {}", dump);
-    }
-
-    private void consume(ItemView itemView) {
-        final String id = stringStorage.get(itemView.getId());
-        Objects.requireNonNull(id, "id");
-        dump.addAndGet(System.identityHashCode(id));
+        logger.debug("dump is {}", consumer.getDump());
     }
 }
