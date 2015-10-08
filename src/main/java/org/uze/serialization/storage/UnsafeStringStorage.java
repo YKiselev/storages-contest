@@ -10,6 +10,8 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +37,8 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
 
     private final long address;
 
+    private final long rawAddress;
+
     private final Unsafe unsafe = UnsafeForAll.getUnsafe();
 
     private final long length;
@@ -51,14 +55,18 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
                 .create();
 
         length = size * averageStringSizeInBytes;
-        address = unsafe.allocateMemory(length);
+        rawAddress = unsafe.allocateMemory(length);
+        address = align(rawAddress);
+        if (address != rawAddress) {
+            logger.info("Aligned: {}->{}", rawAddress, address);
+        }
         lock();
         try {
             final long position = unsafe.getLong(address + POSITION_OFFSET);
             if (isInRange(position)) {
                 // Ok
             } else {
-                unsafe.putLong(address + POSITION_OFFSET, address + HEADER_SIZE);
+                setNewPos(address + HEADER_SIZE);
             }
         } finally {
             unlock();
@@ -78,7 +86,11 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        unsafe.freeMemory(address);
+        unsafe.freeMemory(rawAddress);
+    }
+
+    private static long align(long address) {
+        return address + address % 8;
     }
 
     private void lock() {
@@ -122,14 +134,18 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
             long pos = id;
             unsafe.putInt(pos, bytes.length);
             pos += INTEGER_BYTES;
-            for (int i = 0; i < bytes.length; i++) {
-                unsafe.putByte(pos++, bytes[i]);
+            for (byte b : bytes) {
+                unsafe.putByte(pos++, b);
             }
-            unsafe.putLong(address + POSITION_OFFSET, pos);
+            setNewPos(pos);
         } finally {
             unlock();
         }
         return id;
+    }
+
+    private void setNewPos(long pos) {
+        unsafe.putLong(address + POSITION_OFFSET, align(pos));
     }
 
     private long storeUtf16(String value) {
@@ -146,7 +162,7 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
                 unsafe.putChar(pos, value.charAt(i));
                 pos += CHAR_BYTES;
             }
-            unsafe.putLong(address + POSITION_OFFSET, pos);
+            setNewPos(pos);
         } finally {
             unlock();
         }
@@ -185,5 +201,28 @@ public class UnsafeStringStorage implements StringStorage, AutoCloseable {
         final char[] buff = new char[len];
         unsafe.copyMemory(null, pos, buff, charArrayBaseOffset, len * CHAR_BYTES);
         return new String(buff);
+    }
+
+    @Override
+    public void printStat(Logger logger) {
+        final Map<Integer, Integer> map = new HashMap<>();
+
+        for (Map.Entry<String, Long> entry : stringToIds.entrySet()) {
+            final String str = entry.getKey();
+            final int key = str.length();
+            Integer counter = map.get(key);
+            if (counter == null) {
+                counter = 1;
+            } else {
+                counter = counter + 1;
+            }
+            map.put(key, counter);
+        }
+
+        final StringBuilder sb = new StringBuilder("String storage info (length:count):\n");
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
+        }
+        logger.info(sb.toString());
     }
 }

@@ -2,6 +2,7 @@ package org.uze.serialization.storage;
 
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -37,6 +38,11 @@ public class SimpleStringStorage implements StringStorage {
             idToStrings.put(id, value);
         }
         return id;
+    }
+
+    @Override
+    public void printStat(Logger logger) {
+        // todo
     }
 
     @Override

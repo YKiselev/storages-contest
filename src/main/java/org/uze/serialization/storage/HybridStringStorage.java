@@ -3,6 +3,7 @@ package org.uze.serialization.storage;
 import com.google.common.base.Preconditions;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,5 +46,10 @@ public class HybridStringStorage implements StringStorage {
         Preconditions.checkArgument(idx == id, "Truncated: " + id);
         Preconditions.checkElementIndex(idx, counter.get());
         return strings[idx];
+    }
+
+    @Override
+    public void printStat(Logger logger) {
+        // todo
     }
 }

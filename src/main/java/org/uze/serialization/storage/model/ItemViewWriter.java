@@ -2,7 +2,6 @@ package org.uze.serialization.storage.model;
 
 import org.uze.serialization.storage.ItemView;
 
-import javax.swing.*;
 import java.nio.ByteBuffer;
 
 /**
@@ -18,7 +17,7 @@ public final class ItemViewWriter {
 
     public static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
 
-    public static final int ITEM_VIEW_BYTES = 7 * LONG_BYTES + DOUBLE_BYTES + 2*INTEGER_BYTES;
+    public static final int ITEM_VIEW_BYTES = 7 * LONG_BYTES + DOUBLE_BYTES + 2 * INTEGER_BYTES;
 
     public static final int ID = 0;
 
@@ -48,6 +47,7 @@ public final class ItemViewWriter {
         buf.putLong(itemView.getTimestamp());
         buf.putDouble(itemView.getValue());
         buf.putInt(itemView.getVersion());
+        // see also {@code org.uze.serialization.storage.model.ItemViewWriter.ITEM_VIEW_BYTES}
         buf.putInt(0);
     }
 

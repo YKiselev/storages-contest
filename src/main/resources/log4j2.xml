@@ -9,7 +9,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="org.uze" level="debug" additivity="false">
+        <Logger name="org.uze" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="warn">

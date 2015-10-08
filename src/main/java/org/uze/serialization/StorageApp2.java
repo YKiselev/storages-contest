@@ -8,10 +8,7 @@ import net.openhft.chronicle.map.ReadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.serialization.org.uze.serialization.model.Item;
-import org.uze.serialization.storage.HybridStringStorage;
-import org.uze.serialization.storage.ItemView;
-import org.uze.serialization.storage.StringStorage;
-import org.uze.serialization.storage.UnsafeStringStorage;
+import org.uze.serialization.storage.*;
 import org.uze.serialization.storage.model.*;
 import org.uze.serialization.utils.ItemFactory;
 import org.uze.serialization.utils.ItemViewConsumer;
@@ -32,9 +29,9 @@ public class StorageApp2 implements Closeable {
 
     private final Logger logger = LogManager.getLogger(getClass());
 
-    //private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
+    private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
 
-    private StringStorage stringStorage = new UnsafeStringStorage(2_000_000, 160);
+    //private StringStorage stringStorage = new UnsafeStringStorage(2_000_000, 160);
 
     //private StringStorage stringStorage = new HybridStringStorage(5_000_000, 40);
 
@@ -132,6 +129,8 @@ public class StorageApp2 implements Closeable {
                 logger.info("{} items in {} keys", distributed, keyList.size());
             }
 
+            stringStorage.printStat(logger);
+
             logger.info("Entering main loop");
 
             final ThreadLocalRandom rnd = ThreadLocalRandom.current();
@@ -142,8 +141,6 @@ public class StorageApp2 implements Closeable {
             final Stopwatch timer = Stopwatch.createStarted();
             final ItemViewByteArray valueInstance = keyToItems.newValueInstance();
             while (!Thread.currentThread().isInterrupted()) {
-                Thread.sleep(500);
-
                 final Stopwatch sw = Stopwatch.createStarted();
                 final int index = rnd.nextInt(0, sizes.length);
                 final int size = sizes[index];
@@ -174,6 +171,7 @@ public class StorageApp2 implements Closeable {
         final ByteArrayReader reader = new ByteArrayReader(array);
 
         final int count = (int) reader.readLong();
+        // add counter offset
         int offset = Long.SIZE / Byte.SIZE;
         for (int i = 0; i < count; i++) {
             final ItemView itemView = ItemViewWriter.createView(array, offset);
