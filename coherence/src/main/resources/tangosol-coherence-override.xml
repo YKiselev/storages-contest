@@ -1,0 +1,40 @@
+<?xml version='1.0'?>
+<coherence xmlns="http://xmlns.oracle.com/coherence/coherence-operational-config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://xmlns.oracle.com/coherence/coherence-operational-config
+           http://xmlns.oracle.com/coherence/coherence-cache-config/1.2/coherence-operational-config.xsd">
+    <cluster-config>
+
+        <member-identity>
+            <cluster-name system-property="tangosol.coherence.cluster">MyCoherenceCluster</cluster-name>
+            <role-name>CoherenceAppNode</role-name>
+        </member-identity>
+
+        <unicast-listener>
+            <well-known-addresses>
+                <!--<socket-address id="1">-->
+                    <!--<address>127.0.0.1</address>-->
+                    <!--<port>8888</port>-->
+                <!--</socket-address>-->
+            </well-known-addresses>
+            <!--<address system-property="tangosol.coherence.localhost">127.0.0.1</address>-->
+            <!--<port system-property="tangosol.coherence.localport">7777</port>-->
+        </unicast-listener>
+
+        <multicast-listener>
+            <address>231.1.1.1</address>
+            <port>33387</port>
+            <time-to-live system-property="tangosol.coherence.ttl">5</time-to-live>
+            <join-timeout-milliseconds>3000</join-timeout-milliseconds>
+        </multicast-listener>
+
+        <serializers>
+            <serializer id="pof"/>
+        </serializers>
+    </cluster-config>
+
+    <logging-config>
+        <severity-level system-property="tangosol.coherence.log.level">5</severity-level>
+    </logging-config>
+
+</coherence>
