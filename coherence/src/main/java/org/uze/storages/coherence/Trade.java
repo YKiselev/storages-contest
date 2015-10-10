@@ -6,27 +6,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.uze.codegen.pof.serializer.model.PofSerializable;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Y.Kiselev on 01.10.2015.
  */
 @PofSerializable(typeId = 10000, constructorArgs = {"id", "name", "book",
-        "productType", "type", "status", "timestamp", "value", "version"})
-public class Trade implements Serializable {
+        "productType", "type", "status", "timestamp", "value", "version", "notional"})
+public class Trade extends TradeBase implements Serializable {
 
     private static final long serialVersionUID = -5970518734921740239L;
 
-    private final String id;
-
-    private final String name;
-
-    private final String book;
-
     private final String productType;
-
-    private final String type;
-
-    private final String status;
 
     private final long timestamp;
 
@@ -36,28 +27,12 @@ public class Trade implements Serializable {
 
     private String description;
 
-    public String getId() {
-        return id;
-    }
+    private Double notional;
 
-    public String getName() {
-        return name;
-    }
-
-    public String getBook() {
-        return book;
-    }
+    private Date createdAt;
 
     public String getProductType() {
         return productType;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public long getTimestamp() {
@@ -80,16 +55,30 @@ public class Trade implements Serializable {
         this.description = description;
     }
 
-    public Trade(String id, String name, String book, String productType, String type, String status, long timestamp, double value, int version) {
-        this.id = id;
-        this.name = name;
-        this.book = book;
+    public Double getNotional() {
+        return notional;
+    }
+
+    public void setNotional(Double notional) {
+        this.notional = notional;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Trade(String id, String name, String book, String productType, String type, String status,
+                 long timestamp, double value, int version, Double notional) {
+        super(status, id, name, type, book);
         this.productType = productType;
-        this.type = type;
-        this.status = status;
         this.timestamp = timestamp;
         this.value = value;
         this.version = version;
+        this.notional = notional;
     }
 
     @Override
