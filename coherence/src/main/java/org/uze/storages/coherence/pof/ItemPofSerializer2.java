@@ -35,10 +35,13 @@ public class ItemPofSerializer2 implements PofSerializer {
         final Item obj = (Item)o;
 
         writer.writeString(pof_id, obj.getId());
+        writer.writeRemainder(null);
     }
 
     @Override
     public Object deserialize(PofReader reader) throws IOException {
+        final boolean book = reader.readBoolean(pof_book);
+
         return null;
     }
 }

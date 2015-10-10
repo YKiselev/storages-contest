@@ -10,7 +10,8 @@ import java.io.Serializable;
 /**
  * Created by Y.Kiselev on 01.10.2015.
  */
-@PofSerializable
+@PofSerializable(typeId = 10000, constructorArgs = {"id", "name", "book",
+        "productType", "type", "status", "timestamp", "value", "version"})
 public class Trade implements Serializable {
 
     private static final long serialVersionUID = -5970518734921740239L;
@@ -32,6 +33,8 @@ public class Trade implements Serializable {
     private final double value;
 
     private final int version;
+
+    private String description;
 
     public String getId() {
         return id;
@@ -67,6 +70,14 @@ public class Trade implements Serializable {
 
     public int getVersion() {
         return version;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Trade(String id, String name, String book, String productType, String type, String status, long timestamp, double value, int version) {
