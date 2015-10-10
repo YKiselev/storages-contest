@@ -61,10 +61,14 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <configuration>
                             <executable>java</executable>
+                            <!--<mainClass>org.uze.storages.coherence.ServerApp</mainClass>-->
                             <longClasspath>true</longClasspath>
                             <arguments>
                                 <argument>-Dtangosol.coherence.cacheconfig=server-cache-config.xml</argument>
                                 <argument>-Dtangosol.coherence.distributed.localstorage=true</argument>
+                                <argument>-Xmx4g</argument>
+                                <argument>-Xdebug</argument>
+                                <argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argument>
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>org.uze.storages.coherence.ServerApp</argument>
@@ -81,6 +85,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <!--<configuration>-->
+                    <!--<compilerArgs>-->
+                        <!--<arg>-Apof.serializer.processor.pofConfigFileName=my-pof-config.xml</arg>-->
+                    <!--</compilerArgs>-->
+                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>

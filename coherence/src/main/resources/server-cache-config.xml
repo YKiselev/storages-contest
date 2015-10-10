@@ -14,6 +14,7 @@
         <distributed-scheme>
             <scheme-name>distributed</scheme-name>
             <service-name>DistributedBinaryCache</service-name>
+            <serializer>pof</serializer>
             <backing-map-scheme>
                 <local-scheme/>
             </backing-map-scheme>

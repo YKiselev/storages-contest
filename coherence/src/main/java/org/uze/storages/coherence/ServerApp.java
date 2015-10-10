@@ -23,11 +23,16 @@ public class ServerApp {
 
         final Cluster cluster = CacheFactory.ensureCluster();
 
-        final NamedCache cache = CacheFactory.getCache("Items");
-
         logger.info("Generating items...");
         final List<Item> items = ItemFactory.createList();
-        logger.info("Transforming...");
+
+        logger.info("Storing...");
+        final NamedCache cache = CacheFactory.getCache("Items");
+        for (Item item : items) {
+            cache.put(item.getId(), item);
+        }
+
+        logger.info("{} items stored", items.size());
 
         while (!Thread.currentThread().isInterrupted()) {
             try {
