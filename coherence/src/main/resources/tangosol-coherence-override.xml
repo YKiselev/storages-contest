@@ -12,21 +12,26 @@
 
         <unicast-listener>
             <well-known-addresses>
-                <!--<socket-address id="1">-->
-                    <!--<address>127.0.0.1</address>-->
-                    <!--<port>8888</port>-->
-                <!--</socket-address>-->
+                <socket-address id="1">
+                    <address>192.168.1.33</address>
+                    <port>9000</port>
+                </socket-address>
+
+                <socket-address id="2">
+                    <address>192.168.1.33</address>
+                    <port>9100</port>
+                </socket-address>
             </well-known-addresses>
             <!--<address system-property="tangosol.coherence.localhost">127.0.0.1</address>-->
-            <!--<port system-property="tangosol.coherence.localport">7777</port>-->
+            <port system-property="tangosol.coherence.localport">9000</port>
         </unicast-listener>
 
-        <multicast-listener>
-            <address>231.1.1.1</address>
-            <port>33387</port>
-            <time-to-live system-property="tangosol.coherence.ttl">5</time-to-live>
-            <join-timeout-milliseconds>3000</join-timeout-milliseconds>
-        </multicast-listener>
+        <!--<multicast-listener>-->
+            <!--<address>231.1.1.1</address>-->
+            <!--<port>33387</port>-->
+            <!--<time-to-live system-property="tangosol.coherence.ttl">5</time-to-live>-->
+            <!--<join-timeout-milliseconds>3000</join-timeout-milliseconds>-->
+        <!--</multicast-listener>-->
 
         <serializers>
             <serializer id="pof">

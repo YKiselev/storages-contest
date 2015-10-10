@@ -10,6 +10,8 @@ import org.uze.storages.model.Item;
 import org.uze.storages.utils.ItemFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Y.Kiselev on 09.10.2015.
@@ -19,8 +21,6 @@ public class ServerApp {
     private final Logger logger = LogManager.getLogger(getClass());
 
     private void run() {
-        //final ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("spring/app.xml");
-
         final Cluster cluster = CacheFactory.ensureCluster();
 
         logger.info("Generating items...");
@@ -33,6 +33,19 @@ public class ServerApp {
         }
 
         logger.info("{} items stored", items.size());
+
+        final Item item = items.get(0);
+
+        final Object o = cache.get(item.getId());
+        logger.info("Got {} for key {}", o, item.getId());
+
+        // noinspection unchecked
+        final Set<Map.Entry<?,?>> set = cache.entrySet();
+        for (Map.Entry<?, ?> entry : set) {
+            final Object key = entry.getKey();
+            logger.info("First entry: key={} ({}), {}", key, key.getClass(), entry.getValue());
+            break;
+        }
 
         while (!Thread.currentThread().isInterrupted()) {
             try {
