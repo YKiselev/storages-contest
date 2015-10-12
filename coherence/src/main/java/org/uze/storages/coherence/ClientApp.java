@@ -3,14 +3,14 @@ package org.uze.storages.coherence;
 import com.google.common.base.Stopwatch;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.Cluster;
+import com.tangosol.net.DistributedCacheService;
 import com.tangosol.net.NamedCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.storages.model.Item;
+import org.uze.storages.utils.ItemFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -22,16 +22,30 @@ public class ClientApp {
     private final Logger logger = LogManager.getLogger(getClass());
 
     private void run() {
+//        final DistributedCacheService dcs = DistributedCacheService.class.cast(CacheFactory.getService("DistributedBinaryCache"));
+//        Objects.requireNonNull(dcs, "dcs");
+//        logger.info("LocalStorageEnabled? {}", dcs.isLocalStorageEnabled());
+
         final Cluster cluster = CacheFactory.ensureCluster();
 
         final NamedCache cache = CacheFactory.getCache("Items");
 
-        logger.info("Cache has {} items", cache.size());
+        logger.info("Generating items...");
+        final List<Item> items = ItemFactory.createList();
 
-        // noinspection unchecked
-        final ArrayList<String> keyList = new ArrayList<>(cache.keySet());
+        logger.info("Building map...");
+        final ArrayList<String> keyList = new ArrayList<>(items.size());
+        final Map<String, Item> map = new HashMap<>(items.size());
+        for (Item item : items) {
+            keyList.add(item.getId());
+            map.put(item.getId(), item);
+        }
 
-        logger.info("Collected {} keys", keyList.size());
+        logger.info("Storing map...");
+
+        cache.putAll(map);
+
+        logger.info("{} items stored", items.size());
 
         final ThreadLocalRandom rnd = ThreadLocalRandom.current();
         final int[] sizes = new int[]{10, 5_000, 10_000, 50_000, 100_000};

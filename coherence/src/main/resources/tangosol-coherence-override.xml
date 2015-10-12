@@ -7,7 +7,7 @@
 
         <member-identity>
             <cluster-name system-property="tangosol.coherence.cluster">MyCoherenceCluster</cluster-name>
-            <role-name>CoherenceAppNode</role-name>
+            <role-name>TestClusterNode</role-name>
         </member-identity>
 
         <unicast-listener>
@@ -19,7 +19,12 @@
 
                 <socket-address id="2">
                     <address>192.168.1.33</address>
-                    <port>9100</port>
+                    <port>9001</port>
+                </socket-address>
+
+                <socket-address id="3">
+                    <address>192.168.1.33</address>
+                    <port>9010</port>
                 </socket-address>
             </well-known-addresses>
             <!--<address system-property="tangosol.coherence.localhost">127.0.0.1</address>-->
@@ -32,6 +37,16 @@
             <!--<time-to-live system-property="tangosol.coherence.ttl">5</time-to-live>-->
             <!--<join-timeout-milliseconds>3000</join-timeout-milliseconds>-->
         <!--</multicast-listener>-->
+
+        <!--<services>-->
+            <!--<service>-->
+                <!--<service-type>DistributedBinaryCache</service-type>-->
+                <!--<service-component>PartitionedService.PartitionedCache</service-component>-->
+                <!--<use-filters>-->
+                    <!--<filter-name>gzip</filter-name>-->
+                <!--</use-filters>-->
+            <!--</service>-->
+        <!--</services>-->
 
         <serializers>
             <serializer id="pof">

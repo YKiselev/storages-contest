@@ -54,6 +54,10 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <properties>
+                <storage.generateData>false</storage.generateData>
+                <storage.port>9000</storage.port>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -65,9 +69,13 @@
                             <arguments>
                                 <argument>-Dtangosol.coherence.cacheconfig=server-cache-config.xml</argument>
                                 <argument>-Dtangosol.coherence.distributed.localstorage=true</argument>
-                                <argument>-Xmx4g</argument>
+                                <argument>-Dtangosol.coherence.localport=${storage.port}</argument>
+                                <argument>-DgenerateData=${storage.generateData}</argument>
+                                <argument>-server</argument>
+                                <argument>-XX:+UseConcMarkSweepGC</argument>
+                                <argument>-Xmx2g</argument>
                                 <argument>-Xdebug</argument>
-                                <argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</argument>
+                                <!--<argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</argument>-->
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>org.uze.storages.coherence.ServerApp</argument>
@@ -95,9 +103,11 @@
                                 <argument>-Dtangosol.coherence.cacheconfig=client-cache-config.xml</argument>
                                 <argument>-Dtangosol.coherence.distributed.localstorage=false</argument>
                                 <argument>-Dtangosol.coherence.localport=9100</argument>
-                                <argument>-Xmx3g</argument>
+                                <argument>-server</argument>
+                                <argument>-XX:+UseConcMarkSweepGC</argument>
+                                <argument>-Xmx2g</argument>
                                 <argument>-Xdebug</argument>
-                                <argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5007</argument>
+                                <!--<argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5007</argument>-->
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>org.uze.storages.coherence.ClientApp</argument>
