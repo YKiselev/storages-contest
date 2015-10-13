@@ -30,22 +30,29 @@ public class ClientApp {
 
         final NamedCache cache = CacheFactory.getCache("Items");
 
-        logger.info("Generating items...");
-        final List<Item> items = ItemFactory.createList();
+        final ArrayList<String> keyList;
 
-        logger.info("Building map...");
-        final ArrayList<String> keyList = new ArrayList<>(items.size());
-        final Map<String, Item> map = new HashMap<>(items.size());
-        for (Item item : items) {
-            keyList.add(item.getId());
-            map.put(item.getId(), item);
+        if (cache.isEmpty()) {
+            logger.info("Generating items...");
+            final List<Item> items = ItemFactory.createList();
+
+            logger.info("Building map...");
+            keyList = new ArrayList<>(items.size());
+            final Map<String, Item> map = new HashMap<>(items.size());
+            for (Item item : items) {
+                keyList.add(item.getId());
+                map.put(item.getId(), item);
+            }
+
+            logger.info("Storing map...");
+
+            cache.putAll(map);
+
+            logger.info("{} items stored", items.size());
+        } else {
+            keyList = new ArrayList<>(cache.keySet());
+            logger.info("Cache contains {} items", keyList.size());
         }
-
-        logger.info("Storing map...");
-
-        cache.putAll(map);
-
-        logger.info("{} items stored", items.size());
 
         final ThreadLocalRandom rnd = ThreadLocalRandom.current();
         final int[] sizes = new int[]{10, 5_000, 10_000, 50_000, 100_000};

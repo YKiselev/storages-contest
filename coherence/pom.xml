@@ -73,7 +73,7 @@
                                 <argument>-DgenerateData=${storage.generateData}</argument>
                                 <argument>-server</argument>
                                 <argument>-XX:+UseConcMarkSweepGC</argument>
-                                <argument>-Xmx2g</argument>
+                                <argument>-Xmx4g</argument>
                                 <argument>-Xdebug</argument>
                                 <!--<argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006</argument>-->
                                 <argument>-classpath</argument>
@@ -105,7 +105,7 @@
                                 <argument>-Dtangosol.coherence.localport=9100</argument>
                                 <argument>-server</argument>
                                 <argument>-XX:+UseConcMarkSweepGC</argument>
-                                <argument>-Xmx2g</argument>
+                                <argument>-Xmx4g</argument>
                                 <argument>-Xdebug</argument>
                                 <!--<argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5007</argument>-->
                                 <argument>-classpath</argument>

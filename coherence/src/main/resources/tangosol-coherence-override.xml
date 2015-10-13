@@ -65,4 +65,9 @@
         <severity-level system-property="tangosol.coherence.log.level">5</severity-level>
     </logging-config>
 
+    <management-config>
+        <managed-nodes>none</managed-nodes>
+        <allow-remote-management>false</allow-remote-management>
+    </management-config>
+
 </coherence>

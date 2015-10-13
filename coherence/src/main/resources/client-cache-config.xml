@@ -12,6 +12,21 @@
 
     <caching-schemes>
 
+        <near-scheme>
+            <scheme-name>near</scheme-name>
+            <front-scheme>
+                <local-scheme>
+                    <high-units>400000</high-units>
+                </local-scheme>
+            </front-scheme>
+            <back-scheme>
+                <distributed-scheme>
+                    <scheme-ref>distributed</scheme-ref>
+                </distributed-scheme>
+            </back-scheme>
+            <invalidation-strategy>present</invalidation-strategy>
+        </near-scheme>
+
         <distributed-scheme>
             <scheme-name>distributed</scheme-name>
             <service-name>DistributedBinaryCache</service-name>
