@@ -46,14 +46,6 @@ public class SingleItemPerEntryApp {
         );
     }
 
-    private static List<Item> createList(int count) {
-        final List<Item> items = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            items.add(ItemFactory.create());
-        }
-        return items;
-    }
-
     private void run() throws Exception {
         logger.info("Starting...");
         final int maxItems = 2_000_000;
@@ -68,7 +60,7 @@ public class SingleItemPerEntryApp {
         final List<Long> keyList = new ArrayList<>(maxItems);
         {
             logger.info("Generating list of {} items...", maxItems);
-            final List<Item> items = createList(maxItems);
+            final List<Item> items = ItemFactory.createList(maxItems);
             logger.info("Transforming...");
             final List<ItemView> itemViews = new ArrayList<>(maxItems);
             for (Item item : items) {
@@ -94,8 +86,6 @@ public class SingleItemPerEntryApp {
         final Stopwatch timer = Stopwatch.createStarted();
         final ItemView valueInstance = keyToItems.newValueInstance();
         while (!Thread.currentThread().isInterrupted()) {
-            Thread.sleep(500);
-
             final Stopwatch sw = Stopwatch.createStarted();
             final int index = rnd.nextInt(0, sizes.length);
             final int size = sizes[index];

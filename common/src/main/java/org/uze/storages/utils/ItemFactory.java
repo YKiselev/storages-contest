@@ -30,6 +30,14 @@ public class ItemFactory {
             "Open", "Closed", "Matured", "Tenured", "Cancelled"
     };
 
+    public static int averageKeySize() {
+        return 20 * 2; // UUID = (20 chars) * (2 bytes per character)
+    }
+
+    public static int averageValueSize() {
+        return averageKeySize() + 2 * (64 + 4 + 3 + 16 + 8) + 8 + 8 + 4;
+    }
+
     public static Item create() {
         final ThreadLocalRandom rnd = ThreadLocalRandom.current();
         return new Item(
