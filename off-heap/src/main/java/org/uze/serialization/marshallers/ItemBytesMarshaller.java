@@ -13,14 +13,22 @@ public class ItemBytesMarshaller implements BytesMarshaller<Item> {
 
     public static final ItemBytesMarshaller INSTANCE = new ItemBytesMarshaller();
 
+    private static void write(Bytes bytes, String value) {
+        bytes.writeUTFΔ(value);
+    }
+
+    private static String readString(Bytes bytes){
+        return bytes.readUTFΔ();
+    }
+
     @Override
     public void write(Bytes bytes, Item item) {
-        bytes.writeUTF?(item.getId());
-        bytes.writeUTF?(item.getName());
-        bytes.writeUTF?(item.getBook());
-        bytes.writeUTF?(item.getProductType());
-        bytes.writeUTF?(item.getType());
-        bytes.writeUTF?(item.getStatus());
+        write(bytes, item.getId());
+        write(bytes, item.getName());
+        write(bytes, item.getBook());
+        write(bytes, item.getProductType());
+        write(bytes, item.getType());
+        write(bytes, item.getStatus());
         bytes.writeLong(item.getTimestamp());
         bytes.writeDouble(item.getValue());
         bytes.writeCompactInt(item.getVersion());
@@ -34,12 +42,12 @@ public class ItemBytesMarshaller implements BytesMarshaller<Item> {
     @Override
     public Item read(Bytes bytes, Item item) {
         return new Item(
-                bytes.readUTF(),
-                bytes.readUTF(),
-                bytes.readUTF(),
-                bytes.readUTF(),
-                bytes.readUTF(),
-                bytes.readUTF(),
+                readString(bytes),
+                readString(bytes),
+                readString(bytes),
+                readString(bytes),
+                readString(bytes),
+                readString(bytes),
                 bytes.readLong(),
                 bytes.readDouble(),
                 bytes.readCompactInt()

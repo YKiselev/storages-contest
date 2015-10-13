@@ -25,18 +25,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Y.Kiselev on 01.10.2015.
  */
-public class ManyItemsPerEntryApp implements Closeable {
+public class ManyItemViewsPerEntryApp implements Closeable {
 
     private final Logger logger = LogManager.getLogger(getClass());
 
-    private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
+    //private StringStorage stringStorage = new SimpleStringStorage(2_000_000, 80);
 
-    //private StringStorage stringStorage = new UnsafeStringStorage(2_000_000, 160);
+    private StringStorage stringStorage = new UnsafeStringStorage(2_000_000, 160);
 
     //private StringStorage stringStorage = new HybridStringStorage(5_000_000, 40);
 
     public static void main(String[] args) throws Exception {
-        try (ManyItemsPerEntryApp app = new ManyItemsPerEntryApp()) {
+        try (ManyItemViewsPerEntryApp app = new ManyItemViewsPerEntryApp()) {
             app.run();
         }
     }
@@ -48,22 +48,8 @@ public class ManyItemsPerEntryApp implements Closeable {
         }
     }
 
-    private ItemView transform(Item item, StringStorage stringStorage) {
-        return new ItemViewImpl(
-                stringStorage.put(item.getId()),
-                stringStorage.put(item.getName()),
-                stringStorage.put(item.getBook()),
-                stringStorage.put(item.getProductType()),
-                stringStorage.put(item.getType()),
-                stringStorage.put(item.getStatus()),
-                item.getTimestamp(),
-                item.getValue(),
-                item.getVersion()
-        );
-    }
-
     private int fill(ByteArray array, Collection<ItemView> itemViews) {
-        final ByteBuffer buffer = ByteBuffer.allocate(256 * 1024);
+        final ByteBuffer buffer = ByteBuffer.allocate(128 * 1024);
         buffer.putLong(0); // reserve place for object count
         int counter = 0;
         for (ItemView itemView : itemViews) {
@@ -93,7 +79,7 @@ public class ManyItemsPerEntryApp implements Closeable {
             logger.info("Creating map...");
             final ChronicleMap<Long, ItemViewByteArray> keyToItems = ChronicleMapBuilder.of(Long.class, ItemViewByteArray.class)
                     .immutableKeys()
-                    .entries(ItemFactory.MAX_ITEMS / 1000)
+                    .entries(ItemFactory.MAX_ITEMS / 500)
                     .create();
 
             final List<Long> keyList = new ArrayList<>(ItemFactory.MAX_ITEMS);
@@ -103,7 +89,7 @@ public class ManyItemsPerEntryApp implements Closeable {
                 logger.info("Transforming {} items...", items.size());
                 final List<ItemView> itemViews = new ArrayList<>(items.size());
                 for (Item item : items) {
-                    itemViews.add(transform(item, stringStorage));
+                    itemViews.add(SingleItemViewPerEntryApp.transform(item, stringStorage));
                 }
 
                 logger.info("Storing item views...");
