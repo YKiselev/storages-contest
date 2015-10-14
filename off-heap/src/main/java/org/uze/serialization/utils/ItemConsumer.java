@@ -1,11 +1,9 @@
 package org.uze.serialization.utils;
 
 import com.google.common.base.Preconditions;
-import org.uze.serialization.storage.ItemView;
-import org.uze.serialization.storage.StringStorage;
 import org.uze.storages.model.Item;
 
-import java.util.Objects;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -17,6 +15,12 @@ public class ItemConsumer {
 
     public long getDump() {
         return dump.get();
+    }
+
+    public void consume(Collection<Item> items) {
+        for (Item item : items) {
+            consume(item);
+        }
     }
 
     public void consume(Item item) {

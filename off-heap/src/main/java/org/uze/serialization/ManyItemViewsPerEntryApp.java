@@ -104,7 +104,7 @@ public class ManyItemViewsPerEntryApp implements Closeable {
                     keyList.add(key);
                     key++;
                 }
-                logger.info("{} items in {} keys", distributed, keyList.size());
+                logger.info("{} items in {} keys ({} items per entry)", distributed, keyList.size(), distributed/keyList.size());
             }
 
             stringStorage.printStat(logger);
