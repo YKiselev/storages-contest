@@ -6,7 +6,7 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.serialization.marshallers.ItemBytesMarshaller;
-import org.uze.serialization.utils.ItemConsumer;
+import org.uze.serialization.utils.DefaultItemConsumer;
 import org.uze.storages.model.Item;
 import org.uze.storages.utils.ItemFactory;
 
@@ -58,7 +58,7 @@ public class SingleItemPerEntryApp {
         final int[] sizes = new int[]{10, 5_000, 10_000, 50_000, 100_000};
         long totalElapsed = 0;
         long totalItems = 0;
-        final ItemConsumer consumer = new ItemConsumer();
+        final DefaultItemConsumer consumer = new DefaultItemConsumer();
         final Stopwatch timer = Stopwatch.createStarted();
         while (!Thread.currentThread().isInterrupted()) {
             final Stopwatch sw = Stopwatch.createStarted();

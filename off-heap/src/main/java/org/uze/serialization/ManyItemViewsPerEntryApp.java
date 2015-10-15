@@ -7,11 +7,18 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
 import net.openhft.chronicle.map.ReadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.uze.storages.model.Item;
-import org.uze.serialization.storage.*;
-import org.uze.serialization.storage.model.*;
-import org.uze.storages.utils.ItemFactory;
+import org.uze.serialization.storage.ItemView;
+import org.uze.serialization.storage.StringStorage;
+import org.uze.serialization.storage.UnsafeStringStorage;
+import org.uze.serialization.storage.model.ByteArray;
+import org.uze.serialization.storage.model.ByteArrayReader;
+import org.uze.serialization.storage.model.ItemViewByteArray;
+import org.uze.serialization.storage.model.ItemViewWriter;
+import org.uze.serialization.utils.DefaultItemViewConsumer;
 import org.uze.serialization.utils.ItemViewConsumer;
+import org.uze.serialization.utils.PartialItemViewConsumer;
+import org.uze.storages.model.Item;
+import org.uze.storages.utils.ItemFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -71,6 +78,8 @@ public class ManyItemViewsPerEntryApp implements Closeable {
     }
 
     private void run() {
+        final boolean usePartialConsumer = Boolean.getBoolean("usePartialConsumer");
+        logger.info("Using {} consumer", usePartialConsumer ? "partial" : "full");
         try {
             logger.info("Using string storage {}", stringStorage);
 
@@ -104,7 +113,7 @@ public class ManyItemViewsPerEntryApp implements Closeable {
                     keyList.add(key);
                     key++;
                 }
-                logger.info("{} items in {} keys ({} items per entry)", distributed, keyList.size(), distributed/keyList.size());
+                logger.info("{} items in {} keys ({} items per entry)", distributed, keyList.size(), distributed / keyList.size());
             }
 
             stringStorage.printStat(logger);
@@ -115,7 +124,10 @@ public class ManyItemViewsPerEntryApp implements Closeable {
             final int[] sizes = new int[]{1, 5, 10, 50};
             long totalElapsed = 0;
             long totalItems = 0;
-            final ItemViewConsumer consumer = new ItemViewConsumer(stringStorage);
+
+            final DefaultItemViewConsumer consumer = usePartialConsumer ? new PartialItemViewConsumer(stringStorage)
+                    : new DefaultItemViewConsumer(stringStorage);
+
             final Stopwatch timer = Stopwatch.createStarted();
             final ItemViewByteArray valueInstance = keyToItems.newValueInstance();
             while (!Thread.currentThread().isInterrupted()) {
@@ -145,7 +157,7 @@ public class ManyItemViewsPerEntryApp implements Closeable {
         }
     }
 
-    private int consume(ByteArray array, ItemViewConsumer consumer) {
+    private int consume(ByteArray array, DefaultItemViewConsumer consumer) {
         final ByteArrayReader reader = new ByteArrayReader(array);
 
         final int count = (int) reader.readLong();

@@ -10,6 +10,7 @@ import org.uze.serialization.storage.ItemView;
 import org.uze.serialization.storage.StringStorage;
 import org.uze.serialization.storage.UnsafeStringStorage;
 import org.uze.serialization.storage.model.ItemViewImpl;
+import org.uze.serialization.utils.DefaultItemViewConsumer;
 import org.uze.serialization.utils.ItemViewConsumer;
 import org.uze.storages.model.Item;
 import org.uze.storages.utils.ItemFactory;
@@ -84,7 +85,7 @@ public class SingleItemViewPerEntryApp {
         final int[] sizes = new int[]{10, 5_000, 10_000, 50_000, 100_000};
         long totalElapsed = 0;
         long totalItems = 0;
-        final ItemViewConsumer consumer = new ItemViewConsumer(stringStorage);
+        final DefaultItemViewConsumer consumer = new DefaultItemViewConsumer(stringStorage);
         final Stopwatch timer = Stopwatch.createStarted();
         final ItemView valueInstance = keyToItems.newValueInstance();
         while (!Thread.currentThread().isInterrupted()) {

@@ -8,7 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.uze.serialization.marshallers.ItemBytesMarshaller;
 import org.uze.serialization.marshallers.ListBytesMarshaller;
-import org.uze.serialization.utils.ItemConsumer;
+import org.uze.serialization.utils.DefaultItemConsumer;
+import org.uze.serialization.utils.PartialItemConsumer;
 import org.uze.storages.model.Item;
 import org.uze.storages.utils.ItemFactory;
 
@@ -29,7 +30,9 @@ public class ManyItemsPerEntryApp {
     }
 
     private void run() throws Exception {
-        logger.info("Starting...");
+        final boolean usePartialConsumer = Boolean.getBoolean("usePartialConsumer");
+        logger.info("Using {} consumer", usePartialConsumer ? "partial" : "full");
+
         final int maxItems = ItemFactory.MAX_ITEMS;
         final int itemsPerEntry = 300;
 
@@ -37,7 +40,6 @@ public class ManyItemsPerEntryApp {
         // noinspection unchecked
         final ChronicleMap<Long, List<Item>> keyToItems = ChronicleMapBuilder.of(Long.class, List.class)
                 .immutableKeys()
-                        //.averageKeySize(ItemFactory.averageKeySize())
                 .averageValueSize(ItemFactory.averageValueSize() * itemsPerEntry)
                 .valueMarshaller(new ListBytesMarshaller(ItemBytesMarshaller.INSTANCE))
                 .entries(maxItems / itemsPerEntry)
@@ -63,7 +65,7 @@ public class ManyItemsPerEntryApp {
         final int[] sizes = new int[]{1, 5, 10, 50};
         long totalElapsed = 0;
         long totalItems = 0;
-        final ItemConsumer consumer = new ItemConsumer();
+        final DefaultItemConsumer consumer = usePartialConsumer ? new PartialItemConsumer() : new DefaultItemConsumer();
         final Stopwatch timer = Stopwatch.createStarted();
         while (!Thread.currentThread().isInterrupted()) {
             final Stopwatch sw = Stopwatch.createStarted();

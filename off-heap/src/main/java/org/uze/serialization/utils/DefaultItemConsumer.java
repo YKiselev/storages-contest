@@ -4,18 +4,11 @@ import com.google.common.base.Preconditions;
 import org.uze.storages.model.Item;
 
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by Y.Kiselev on 02.10.2015.
+ * Created by Y.Kiselev on 15.10.2015.
  */
-public class ItemConsumer {
-
-    private final AtomicLong dump = new AtomicLong();
-
-    public long getDump() {
-        return dump.get();
-    }
+public class DefaultItemConsumer extends AbstractConsumer {
 
     public void consume(Collection<Item> items) {
         for (Item item : items) {
@@ -25,19 +18,19 @@ public class ItemConsumer {
 
     public void consume(Item item) {
         final String id = item.getId();
-        dump.addAndGet(System.identityHashCode(id));
+        dump(id);
 
         final String name = item.getName();
-        dump.addAndGet(System.identityHashCode(name));
+        dump(name);
 
         final double value = item.getValue();
-        dump.addAndGet(Double.doubleToLongBits(value));
+        dump(value);
 
         final String status = item.getStatus();
-        dump.addAndGet(System.identityHashCode(status));
+        dump(status);
 
         final int version = item.getVersion();
         Preconditions.checkArgument(version >= 0, "version");
-        dump.addAndGet(version);
+        dump(version);
     }
 }
